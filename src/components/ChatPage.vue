@@ -1,5 +1,8 @@
 <template>
   <div class="chat-container">
+    <div class="header">
+      <h1>唐诗助手</h1>
+    </div>
     <div class="messages" ref="messagesContainer">
       <div v-for="message in messages" :key="message.id" 
            :class="['message', message.type]">
@@ -157,6 +160,19 @@ const sendMessage = async () => {
   box-sizing: border-box;
   border: 1px solid #ddd;
   border-radius: 8px;
+}
+
+.header {
+  padding: 16px;
+  background: #007bff;
+  color: white;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 20px;
 }
 
 .messages {
