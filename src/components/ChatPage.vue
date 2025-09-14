@@ -33,9 +33,41 @@ const inputMessage = ref('')
 const loading = ref(false)
 const messagesContainer = ref(null)
 const conversationId = ref('')
+const userIP = ref('')
 
 const API_KEY = 'app-Orfc1q7yvnIRAo1MIWkOhXzv'
 const API_URL = 'https://api.dify.ai/v1/chat-messages'
+
+const getUserIP = async () => {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json')
+    const data = await response.json()
+    return data.ip
+  } catch {
+    return 'unknown'
+  }
+}
+
+const checkDailyLimit = () => {
+  const today = new Date().toDateString()
+  const key = `usage_${userIP.value}_${today}`
+  const count = parseInt(localStorage.getItem(key) || '0')
+  return count < 300
+}
+
+const incrementUsage = () => {
+  const today = new Date().toDateString()
+  const key = `usage_${userIP.value}_${today}`
+  const count = parseInt(localStorage.getItem(key) || '0')
+  localStorage.setItem(key, (count + 1).toString())
+}
+
+const getRemainingCount = () => {
+  const today = new Date().toDateString()
+  const key = `usage_${userIP.value}_${today}`
+  const count = parseInt(localStorage.getItem(key) || '0')
+  return 300 - count
+}
 
 const addMessage = (content, type, options = null) => {
   messages.value.push({
@@ -60,11 +92,17 @@ const selectOption = (option) => {
   sendMessageToAPI(option)
 }
 
-onMounted(() => {
-  addMessage('你想背哪首诗呢？', 'assistant', ['李白的诗', '春望', '随便'])
+onMounted(async () => {
+  userIP.value = await getUserIP()
+  addMessage('你想背哪首诗呢？', 'assistant', ['李白的诗', '春望', '杜甫的诗', '随便'])
 })
 
 const sendMessageToAPI = async (message) => {
+  if (!checkDailyLimit()) {
+    addMessage('今日使用次数已达上限（300次），请明天再来', 'assistant')
+    return
+  }
+  
   loading.value = true
   
   try {
@@ -79,13 +117,14 @@ const sendMessageToAPI = async (message) => {
         query: message,
         response_mode: 'blocking',
         conversation_id: conversationId.value,
-        user: 'user-123'
+        user: userIP.value
       })
     })
     
     const data = await response.json()
     
     if (data.answer) {
+      incrementUsage()
       addMessage(data.answer, 'assistant')
       conversationId.value = data.conversation_id
     } else {
