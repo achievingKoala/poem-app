@@ -37,6 +37,7 @@ const loading = ref(false)
 const messagesContainer = ref(null)
 const conversationId = ref('')
 const userIP = ref('')
+const currentQuestion = ref(null)
 
 const API_KEY = 'app-Orfc1q7yvnIRAo1MIWkOhXzv'
 const API_URL = 'https://api.dify.ai/v1/chat-messages'
@@ -127,9 +128,36 @@ const sendMessageToAPI = async (message) => {
     const data = await response.json()
     
     if (data.answer) {
-      incrementUsage()
-      addMessage(data.answer, 'assistant')
-      conversationId.value = data.conversation_id
+      let poemData = null
+      try {
+        const jsonMatch = data.answer.match(/```json\s*([\s\S]*?)\s*```/)
+        if (jsonMatch) {
+          poemData = JSON.parse(jsonMatch[1])
+        }
+      } catch (e) {
+        console.log('JSON解析失败:', e)
+      }
+      
+      if (poemData && poemData.title) {
+        const isAskPrevious = Math.random() < 0.5
+        currentQuestion.value = {
+          ...poemData,
+          isAskPrevious,
+          expectedAnswer: isAskPrevious ? poemData.next_line : poemData.previous_line
+        }
+        
+        const poemMessage = isAskPrevious 
+          ? `《${poemData.title}》- ${poemData.author}\n\n上句：${poemData.previous_line}\n下句：？`
+          : `《${poemData.title}》- ${poemData.author}\n\n上句：？\n下句：${poemData.next_line}`
+        
+        incrementUsage()
+        addMessage(poemMessage, 'assistant')
+        conversationId.value = data.conversation_id
+      } else {
+        incrementUsage()
+        addMessage(data.answer, 'assistant')
+        conversationId.value = data.conversation_id
+      }
     } else {
       addMessage('抱歉，出现了错误', 'assistant')
     }
@@ -147,7 +175,18 @@ const sendMessage = async () => {
   addMessage(userMessage, 'user')
   inputMessage.value = ''
   
-  await sendMessageToAPI(userMessage)
+  if (currentQuestion.value) {
+    const isCorrect = userMessage.includes(currentQuestion.value.expectedAnswer)
+    const feedback = isCorrect ? '✓ 正确！' : `✗ 错误，正确答案是：${currentQuestion.value.expectedAnswer}`
+    addMessage(feedback, 'assistant')
+    currentQuestion.value = null
+    
+    setTimeout(() => {
+      sendMessageToAPI('continue')
+    }, 1000)
+  } else {
+    await sendMessageToAPI(userMessage)
+  }
 }
 </script>
 
