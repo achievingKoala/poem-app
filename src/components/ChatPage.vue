@@ -158,28 +158,30 @@ const sendMessage = async () => {
   height: 90vh;
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid #ddd;
+  border: 1px solid #d4af37;
   border-radius: 8px;
+  background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
 }
 
 .header {
   padding: 16px;
-  background: #007bff;
-  color: white;
+  background: linear-gradient(135deg, #2c5530 0%, #1a3d1f 100%);
+  color: #d4af37;
   text-align: center;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #d4af37;
 }
 
 .header h1 {
   margin: 0;
   font-size: 20px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .messages {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
-  background: #f9f9f9;
+  background: transparent;
 }
 
 .message {
@@ -204,41 +206,56 @@ const sendMessage = async () => {
 }
 
 .user .content {
-  background: #007bff;
+  background: linear-gradient(135deg, #c8102e 0%, #a00d26 100%);
   color: white;
+  box-shadow: 0 2px 4px rgba(200, 16, 46, 0.2);
 }
 
 .assistant .content {
-  background: white;
-  border: 1px solid #ddd;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #d4af37;
+  box-shadow: 0 2px 4px rgba(212, 175, 55, 0.1);
 }
 
 .input-area {
   display: flex;
   padding: 16px;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #d4af37;
   gap: 8px;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .input-area input {
   flex: 1;
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid #d4af37;
   border-radius: 4px;
   outline: none;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.input-area input:focus {
+  border-color: #2c5530;
+  box-shadow: 0 0 0 2px rgba(44, 85, 48, 0.1);
 }
 
 .input-area button {
   padding: 8px 16px;
-  background: #007bff;
-  color: white;
+  background: linear-gradient(135deg, #2c5530 0%, #1a3d1f 100%);
+  color: #d4af37;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 500;
+}
+
+.input-area button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1a3d1f 0%, #0f2912 100%);
 }
 
 .input-area button:disabled {
   background: #ccc;
+  color: #666;
   cursor: not-allowed;
 }
 
@@ -251,12 +268,19 @@ const sendMessage = async () => {
 
 .option-btn {
   padding: 6px 12px;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #d4af37;
   border-radius: 16px;
   cursor: pointer;
   font-size: 14px;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  color: #2c5530;
+}
+
+.option-btn:hover {
+  background: #d4af37;
+  color: white;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 480px) {
