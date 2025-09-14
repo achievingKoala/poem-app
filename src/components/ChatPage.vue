@@ -4,6 +4,12 @@
       <div v-for="message in messages" :key="message.id" 
            :class="['message', message.type]">
         <div class="content">{{ message.content }}</div>
+        <div v-if="message.showOptions" class="options">
+          <button v-for="option in message.options" :key="option" 
+                  @click="selectOption(option)" class="option-btn">
+            {{ option }}
+          </button>
+        </div>
       </div>
     </div>
     
@@ -20,7 +26,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 
 const messages = ref([])
 const inputMessage = ref('')
@@ -31,23 +37,34 @@ const conversationId = ref('')
 const API_KEY = 'app-Orfc1q7yvnIRAo1MIWkOhXzv'
 const API_URL = 'https://api.dify.ai/v1/chat-messages'
 
-const addMessage = (content, type) => {
+const addMessage = (content, type, options = null) => {
   messages.value.push({
     id: Date.now(),
     content,
-    type
+    type,
+    showOptions: !!options,
+    options
   })
   nextTick(() => {
     messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
   })
 }
 
-const sendMessage = async () => {
-  if (!inputMessage.value.trim() || loading.value) return
-  
-  const userMessage = inputMessage.value
-  addMessage(userMessage, 'user')
-  inputMessage.value = ''
+const selectOption = (option) => {
+  // 隐藏选项按钮
+  messages.value.forEach(msg => {
+    if (msg.showOptions) msg.showOptions = false
+  })
+  // 发送选择的选项
+  addMessage(option, 'user')
+  sendMessageToAPI(option)
+}
+
+onMounted(() => {
+  addMessage('你想背哪首诗呢？', 'assistant', ['李白的诗', '春望', '随便'])
+})
+
+const sendMessageToAPI = async (message) => {
   loading.value = true
   
   try {
@@ -59,7 +76,7 @@ const sendMessage = async () => {
       },
       body: JSON.stringify({
         inputs: {},
-        query: userMessage,
+        query: message,
         response_mode: 'blocking',
         conversation_id: conversationId.value,
         user: 'user-123'
@@ -79,6 +96,16 @@ const sendMessage = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const sendMessage = async () => {
+  if (!inputMessage.value.trim() || loading.value) return
+  
+  const userMessage = inputMessage.value
+  addMessage(userMessage, 'user')
+  inputMessage.value = ''
+  
+  await sendMessageToAPI(userMessage)
 }
 </script>
 
@@ -101,14 +128,15 @@ const sendMessage = async () => {
 .message {
   margin-bottom: 12px;
   display: flex;
+  flex-direction: column;
 }
 
 .message.user {
-  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .message.assistant {
-  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .content {
@@ -155,5 +183,26 @@ const sendMessage = async () => {
 .input-area button:disabled {
   background: #ccc;
   cursor: not-allowed;
+}
+
+.options {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.option-btn {
+  padding: 6px 12px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.option-btn:hover {
+  background: #e0e0e0;
 }
 </style>
