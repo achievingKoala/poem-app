@@ -100,7 +100,7 @@ onMounted(async () => {
   userIP.value = await getUserIP()
   addMessage('你想背哪首诗呢？', 'assistant', ['李白的诗', '春望', '杜甫的诗', '随便'])
 })
-
+// TODO: #1 每五句统计一下正确率
 const sendMessageToAPI = async (message) => {
   if (!checkDailyLimit()) {
     addMessage('今日使用次数已达上限（300次），请明天再来', 'assistant')
