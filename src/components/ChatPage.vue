@@ -114,6 +114,8 @@ const sendMessage = async () => {
   display: flex;
   flex-direction: column;
   height: 600px;
+  width: 100%;
+  box-sizing: border-box;
   border: 1px solid #ddd;
   border-radius: 8px;
 }
@@ -140,7 +142,7 @@ const sendMessage = async () => {
 }
 
 .content {
-  max-width: 70%;
+  max-width: min(80%, 640px);
   padding: 8px 12px;
   border-radius: 12px;
   word-wrap: break-word;
@@ -202,7 +204,9 @@ const sendMessage = async () => {
   transition: background 0.2s;
 }
 
-.option-btn:hover {
-  background: #e0e0e0;
+@media (max-width: 480px) {
+  .content {
+    max-width: 90%;
+  }
 }
 </style>
