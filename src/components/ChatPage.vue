@@ -113,7 +113,7 @@ const sendMessage = async () => {
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 600px;
+  height: 90vh;
   width: 100%;
   box-sizing: border-box;
   border: 1px solid #ddd;
