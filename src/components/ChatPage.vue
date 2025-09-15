@@ -176,8 +176,16 @@ const sendMessage = async () => {
   inputMessage.value = ''
   
   if (currentQuestion.value) {
+    const isDontKnow = userMessage.includes('不知道') || userMessage.includes('不会')
     const isCorrect = userMessage.includes(currentQuestion.value.expectedAnswer)
-    const feedback = isCorrect ? '✓ 正确！' : `✗ 错误，正确答案是：${currentQuestion.value.expectedAnswer}`
+    
+    let feedback
+    if (isDontKnow) {
+      feedback = `答案是：${currentQuestion.value.expectedAnswer}`
+    } else {
+      feedback = isCorrect ? '✓ 正确！' : `✗ 错误，正确答案是：${currentQuestion.value.expectedAnswer}`
+    }
+    
     addMessage(feedback, 'assistant')
     currentQuestion.value = null
     
