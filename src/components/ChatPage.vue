@@ -130,10 +130,7 @@ const sendMessageToAPI = async (message) => {
     if (data.answer) {
       let poemData = null
       try {
-        const jsonMatch = data.answer.match(/```json\s*([\s\S]*?)\s*```/)
-        if (jsonMatch) {
-          poemData = JSON.parse(jsonMatch[1])
-        }
+        poemData = JSON.parse(data.answer)
       } catch (e) {
         console.log('JSON解析失败:', e)
       }
