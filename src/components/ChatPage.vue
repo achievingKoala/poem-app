@@ -174,7 +174,8 @@ const sendMessage = async () => {
   
   if (currentQuestion.value) {
     const isDontKnow = userMessage.includes('不知道') || userMessage.includes('不会')
-    const isCorrect = userMessage.includes(currentQuestion.value.expectedAnswer)
+    const isCorrect = userMessage.replace(/[^\w\s]/g, '').includes(currentQuestion.value.expectedAnswer.replace(/[^\w\s]/g, ''))
+
     
     let feedback
     if (isDontKnow) {
