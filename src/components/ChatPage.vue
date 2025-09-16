@@ -39,7 +39,7 @@ const conversationId = ref('')
 const userIP = ref('')
 const currentQuestion = ref(null)
 
-const API_KEY = 'app-Orfc1q7yvnIRAo1MIWkOhXzv'
+const API_KEY = 'app-0X4UmqaPxZwbrW36f9bQxfnP'
 const API_URL = 'https://api.dify.ai/v1/chat-messages'
 
 const getUserIP = async () => {
