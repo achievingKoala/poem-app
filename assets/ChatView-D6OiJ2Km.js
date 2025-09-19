@@ -1,1 +1,0 @@
-import{_ as e,c as a,o as t,b as s,C as c}from"./index-BeK0kYi4.js";const o={class:"chat-view"},_={__name:"ChatView",setup(r){return(n,p)=>(t(),a("div",o,[s(c)]))}},d=e(_,[["__scopeId","data-v-a4603333"]]);export{d as default};
